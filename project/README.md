@@ -4,6 +4,8 @@
 
 Perspectos is a community discussion platform built around a single idea: someone drops one word, and everyone shares what it means to them. Instead of arguing over long threads, you see a wide range of viewpoints on the same word, such as *freedom*, *success* or *home*.
 
+**Live demo:** https://perspectos.vercel.app
+
 Built with Flask, SQLite and vanilla JavaScript. No heavy frameworks or external services.
 
 ## Features
@@ -87,7 +89,9 @@ Set these as environment variables (all optional for local use):
 
 ## Deployment
 
-GitHub Pages can't run Flask apps. Deploy to a host that supports Python, such as PythonAnywhere or Render.
+The live demo runs on [Vercel](https://perspectos.vercel.app). GitHub Pages can't run Flask apps, so deploy to a host that supports Python, such as Vercel, PythonAnywhere or Render.
+
+> **Note:** on Vercel the filesystem is temporary, so the SQLite database can reset when the server restarts. For permanent data, use PythonAnywhere or Render with a persistent disk.
 
 Production start command:
 
