@@ -4,7 +4,14 @@ from datetime import timedelta
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
-os.makedirs(INSTANCE_DIR, exist_ok=True)
+try:
+    os.makedirs(INSTANCE_DIR, exist_ok=True)
+    if not os.access(INSTANCE_DIR, os.W_OK):
+        raise OSError("instance folder is read-only")
+except OSError:
+    # Read-only filesystems (e.g. Vercel/serverless): only /tmp is writable.
+    # NOTE: data in /tmp is temporary and is lost when the server restarts.
+    INSTANCE_DIR = "/tmp"
 
 
 def _load_secret_key():
@@ -18,12 +25,12 @@ def _load_secret_key():
         with open(path) as f:
             return f.read().strip()
     key = secrets.token_hex(32)
-    with open(path, "w") as f:
-        f.write(key)
     try:
+        with open(path, "w") as f:
+            f.write(key)
         os.chmod(path, 0o600)
     except OSError:
-        pass
+        pass  # can't persist it; set SECRET_KEY in the environment instead
     return key
 
 
