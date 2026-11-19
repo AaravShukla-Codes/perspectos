@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Reports · Perspectos{% endblock %}
+{% block page %}admin{% endblock %}
+
+{% block content %}
+<section class="block">
+  <div class="block-head">
+    <h1>Reports</h1>
+    <div class="row">
+      <label class="sr-only" for="report-status">Status</label>
+      <select id="report-status">
+        <option value="open">Open</option>
+        <option value="dismissed">Dismissed</option>
+      </select>
+    </div>
+  </div>
+  <div id="reports" class="stack"></div>
+  <p id="reports-empty" class="muted center" hidden>Nothing here. 🎉</p>
+</section>
+{% endblock %}

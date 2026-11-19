@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block page %}index{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1 class="tagline">One Word.<br><span>Unlimited Perspectives.</span></h1>
+  <p class="lead">Drop a single word. See what everyone thinks.</p>
+
+  <form id="search-form" class="search" role="search">
+    <input id="search-input" type="search" maxlength="50" placeholder="Search words, e.g. freedom" aria-label="Search topics">
+    <button class="btn" type="submit">Search</button>
+  </form>
+
+  {% if me %}
+    <button id="create-btn" class="btn btn-primary btn-large" type="button">+ Share a word</button>
+  {% else %}
+    <a class="btn btn-primary btn-large" href="{{ url_for('login_page', next='/') }}">+ Share a word</a>
+  {% endif %}
+</section>
+
+<nav id="category-chips" class="chips" aria-label="Categories">
+  <button class="chip active" data-category="" type="button">All</button>
+  {% for c in categories %}
+    <button class="chip" data-category="{{ c }}" type="button">{{ c }}</button>
+  {% endfor %}
+</nav>
+
+<div id="home-sections">
+  <section class="block">
+    <div class="block-head">
+      <h2>Trending</h2>
+      <button class="link-btn" data-see-all="trending" type="button">See all</button>
+    </div>
+    <div id="list-trending" class="topic-grid"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Latest discussions</h2>
+      <button class="link-btn" data-see-all="recent" type="button">See all</button>
+    </div>
+    <div id="list-recent" class="topic-grid"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Most discussed</h2>
+      <button class="link-btn" data-see-all="discussed" type="button">See all</button>
+    </div>
+    <div id="list-discussed" class="topic-grid"></div>
+  </section>
+</div>
+
+<section id="results" class="block" hidden>
+  <div class="block-head">
+    <h2 id="results-title">All topics</h2>
+    <div class="row">
+      <label class="sr-only" for="sort-select">Sort by</label>
+      <select id="sort-select">
+        <option value="recent">Newest</option>
+        <option value="trending">Trending</option>
+        <option value="discussed">Most discussed</option>
+        <option value="popular">Most popular</option>
+      </select>
+      <button id="clear-btn" class="link-btn" type="button">Clear</button>
+    </div>
+  </div>
+  <div id="results-list" class="topic-grid"></div>
+  <p id="results-empty" class="muted center" hidden>No topics found. Why not start this one?</p>
+  <div class="center"><button id="load-more" class="btn" type="button" hidden>Load more</button></div>
+</section>
+
+{% if me %}
+<dialog id="create-dialog">
+  <form id="create-form" class="stack" autocomplete="off">
+    <h2>Share a word</h2>
+    <label>One word
+      <input id="create-word" name="word" required maxlength="30" placeholder="FREEDOM">
+    </label>
+    <label>Why this word? <span class="muted">(optional)</span>
+      <textarea name="description" maxlength="200" rows="3" placeholder="Give people a starting point…"></textarea>
+    </label>
+    <label>Category
+      <select name="category">
+        {% for c in categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+      </select>
+    </label>
+    <p class="form-error" id="create-error" role="alert" hidden></p>
+    <div class="row end">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary">Start discussion</button>
+    </div>
+  </form>
+</dialog>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+# Local data and secrets (never commit these)
+instance/*
+!instance/.keep
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

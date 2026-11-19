@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ topic.word }} · Perspectos{% endblock %}
+{% block page %}topic{% endblock %}
+
+{% block content %}
+<div id="topic-page" data-topic-id="{{ topic.id }}" data-logged-in="{{ 1 if me else 0 }}">
+
+  <article class="topic-head">
+    <a class="badge" href="{{ url_for('index', category=topic.category) }}">{{ topic.category }}</a>
+    <h1 class="topic-word">{{ topic.word }}</h1>
+    {% if topic.description %}<p class="topic-desc">{{ topic.description }}</p>{% endif %}
+    <p class="byline">
+      Started by <a href="{{ url_for('profile_page', username=topic.author) }}">{{ topic.author }}</a>
+      · {{ topic.created_at|pretty_date }}
+      · <span id="comment-count-top">{{ topic.comment_count }}</span> perspectives
+    </p>
+
+    {% if me %}
+    <div class="row">
+      {% if me.id == topic.author_id %}
+        <button id="edit-topic-btn" class="btn btn-small" type="button">Edit</button>
+      {% else %}
+        <button id="report-topic-btn" class="btn btn-small" type="button">Report</button>
+      {% endif %}
+      {% if me.id == topic.author_id or me.is_admin %}
+        <button id="delete-topic-btn" class="btn btn-small btn-danger" type="button">Delete</button>
+      {% endif %}
+    </div>
+    {% endif %}
+  </article>
+
+  <section class="block">
+    <h2>Add your perspective</h2>
+    {% if me %}
+      <form id="comment-form" class="stack">
+        <label class="sr-only" for="comment-input">Your perspective</label>
+        <textarea id="comment-input" maxlength="1000" rows="3" required placeholder="What does “{{ topic.word }}” mean to you?"></textarea>
+        <p class="form-error" id="comment-error" role="alert" hidden></p>
+        <div class="row end"><button class="btn btn-primary" type="submit">Post</button></div>
+      </form>
+    {% else %}
+      <p class="card muted"><a href="{{ url_for('login_page', next=request.path) }}">Log in</a> or
+        <a href="{{ url_for('register_page') }}">sign up</a> to share your perspective.</p>
+    {% endif %}
+  </section>
+
+  <section class="block">
+    <div class="block-head">
+      <h2><span id="comment-count">{{ topic.comment_count }}</span> perspectives</h2>
+      <div class="row">
+        <label class="sr-only" for="comment-sort">Sort comments</label>
+        <select id="comment-sort">
+          <option value="oldest">Oldest first</option>
+          <option value="newest">Newest first</option>
+          <option value="top">Top rated</option>
+        </select>
+      </div>
+    </div>
+    <div id="comments"></div>
+    <p id="comments-empty" class="muted center" hidden>No perspectives yet. Be the first.</p>
+  </section>
+
+  {% if me %}
+  <dialog id="edit-topic-dialog">
+    <form id="edit-topic-form" class="stack">
+      <h2>Edit “{{ topic.word }}”</h2>
+      <label>Description
+        <textarea name="description" maxlength="200" rows="3">{{ topic.description }}</textarea>
+      </label>
+      <label>Category
+        <select name="category">
+          {% for c in categories %}<option value="{{ c }}" {{ 'selected' if c == topic.category }}>{{ c }}</option>{% endfor %}
+        </select>
+      </label>
+      <p class="form-error" id="edit-topic-error" role="alert" hidden></p>
+      <div class="row end">
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="report-dialog">
+    <form id="report-form" class="stack">
+      <h2>Report <span id="report-what">content</span></h2>
+      <label>What is wrong with it?
+        <textarea name="reason" maxlength="300" rows="3" required placeholder="Spam, abuse, off-topic…"></textarea>
+      </label>
+      <p class="form-error" id="report-error" role="alert" hidden></p>
+      <div class="row end">
+        <button type="button" class="btn" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Send report</button>
+      </div>
+    </form>
+  </dialog>
+  {% endif %}
+</div>
+{% endblock %}

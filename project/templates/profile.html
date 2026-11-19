@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.username }} · Perspectos{% endblock %}
+{% block page %}profile{% endblock %}
+
+{% block content %}
+<section class="profile-head">
+  <div class="avatar" aria-hidden="true">{{ profile.username[0]|upper }}</div>
+  <div>
+    <h1>{{ profile.username }}</h1>
+    <p class="muted">Joined {{ profile.created_at|pretty_date }}
+      · {{ topics|length }} topics · {{ total_comments }} comments</p>
+    {% if profile.bio %}<p class="bio">{{ profile.bio }}</p>
+    {% else %}<p class="muted">No bio yet.</p>{% endif %}
+  </div>
+</section>
+
+{% if me and me.id == profile.id %}
+<details class="card">
+  <summary>Edit profile</summary>
+  <form id="profile-form" class="stack">
+    <label>Username
+      <input name="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" value="{{ profile.username }}">
+    </label>
+    <label>Bio
+      <textarea name="bio" maxlength="300" rows="3" placeholder="Tell people a little about yourself">{{ profile.bio }}</textarea>
+    </label>
+    <p class="form-error" id="form-error" role="alert" hidden></p>
+    <div class="row end"><button class="btn btn-primary" type="submit">Save profile</button></div>
+  </form>
+</details>
+{% endif %}
+
+<section class="block">
+  <h2>Topics created</h2>
+  {% if topics %}
+    <div class="topic-grid">
+      {% for t in topics %}
+        <a class="topic-card" href="{{ url_for('topic_page', topic_id=t.id) }}">
+          <span class="topic-card-word">{{ t.word }}</span>
+          {% if t.description %}<span class="topic-card-desc">{{ t.description }}</span>{% endif %}
+          <span class="topic-card-meta">
+            <span class="badge">{{ t.category }}</span>
+            <span>{{ t.comment_count }} perspectives</span>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="muted">No topics yet.</p>
+  {% endif %}
+</section>
+
+<section class="block">
+  <h2>Discussions joined</h2>
+  {% if participation %}
+    <ul class="plain-list">
+      {% for p in participation %}
+        <li>
+          <a href="{{ url_for('topic_page', topic_id=p.id) }}" class="word-link">{{ p.word }}</a>
+          <span class="muted">{{ p.my_comments }} {{ 'comment' if p.my_comments == 1 else 'comments' }}
+            · last on {{ p.last_at|pretty_date }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">Hasn't joined any discussions yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Log in · Perspectos{% endblock %}
+{% block page %}login{% endblock %}
+
+{% block content %}
+<section class="narrow">
+  <h1>Welcome back</h1>
+  <form id="login-form" class="stack card" autocomplete="on">
+    <label>Username or email
+      <input name="username" required maxlength="120" autocomplete="username">
+    </label>
+    <label>Password
+      <input name="password" type="password" required maxlength="128" autocomplete="current-password">
+    </label>
+    <p class="form-error" id="form-error" role="alert" hidden></p>
+    <button class="btn btn-primary" type="submit">Log in</button>
+  </form>
+  <p class="muted center">New here? <a href="{{ url_for('register_page') }}">Create an account</a></p>
+</section>
+{% endblock %}
